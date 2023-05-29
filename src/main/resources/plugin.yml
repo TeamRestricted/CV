@@ -1,0 +1,22 @@
+name: lyvias-tale
+version: '${version}'
+main: cn.taskeren.lyviastale.LyviasTalePlugin
+description: "Lyvia's Tale"
+api-version: 1.18
+author: Taskeren
+libraries:
+  - "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21"
+permissions:
+  lyviastale:
+    description: "The root permission node of Lyvia's Tale"
+    default: op
+    children:
+      lyviastale.command.cpop: true
+  lyviastale.command.cpop:
+    description: "The permission to execute cpop command"
+    default: op
+commands:
+  cpop:
+    description: "Let the specific player to execute command as operator permission"
+    usage: "/cpop <player> <...command args>"
+    permission: lyviastale.command.cpop
