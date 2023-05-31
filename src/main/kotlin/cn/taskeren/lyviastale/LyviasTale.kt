@@ -19,6 +19,7 @@ private lateinit var lyviasTaleDatabase: MongoDatabase
 object LyviasTaleInitializer {
 
 	private lateinit var mongoDBUrl: String
+	private lateinit var mongoDBName: String
 
 	fun init() {
 		LTLog.info("Loading Configurations")
@@ -28,7 +29,7 @@ object LyviasTaleInitializer {
 		// fix "Service ClassMappingTypeService not found"
 		System.setProperty("org.litote.mongo.test.mapping.service", "org.litote.kmongo.jackson.JacksonClassMappingTypeService")
 		lyviasTaleClient = KMongo.createClient(mongoDBUrl)
-		lyviasTaleDatabase = lyviasTaleClient.getDatabase("LyviasTale")
+		lyviasTaleDatabase = lyviasTaleClient.getDatabase(mongoDBName)
 
 		LTLog.info("Registering Commands")
 		LyviasTale.getCommand("cpop")?.apply {
@@ -48,5 +49,6 @@ object LyviasTaleInitializer {
 		LyviasTale.saveDefaultConfig()
 		val config = LyviasTale.config
 		mongoDBUrl = config.getString("database.mongodb.url") ?: "mongodb://localhost"
+		mongoDBName = config.getString("database.mongodb.name") ?: "LyviasTale"
 	}
 }
