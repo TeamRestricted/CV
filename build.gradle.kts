@@ -15,10 +15,14 @@ repositories {
 	mavenCentral()
 	maven("https://libraries.minecraft.net")
 	maven("https://papermc.io/repo/repository/maven-public/")
+	maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
 
 dependencies {
 	paperweight.paperDevBundle("1.18.2-R0.1-SNAPSHOT")
+
+	implementation("org.litote.kmongo:kmongo:4.9.0")
+	compileOnly("me.clip:placeholderapi:2.11.3")
 }
 
 java {

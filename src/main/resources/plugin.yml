@@ -5,7 +5,10 @@ description: "Lyvia's Tale"
 api-version: 1.18
 author: Taskeren
 libraries:
-  - "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21"
+  - "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21" # Kotlin Standard Library
+  - "org.litote.kmongo:kmongo:4.9.0" # KMongo, the Kotlin optimized Mongo client
+depend:
+  - "PlaceholderAPI"
 permissions:
   lyviastale:
     description: "The root permission node of Lyvia's Tale"
@@ -15,8 +18,15 @@ permissions:
   lyviastale.command.cpop:
     description: "The permission to execute cpop command"
     default: op
+  lyviastale.command.cv:
+    description: "The permission to execute cv command"
+    default: op
 commands:
   cpop:
     description: "Let the specific player to execute command as operator permission"
     usage: "/cpop <player> <...command args>"
     permission: lyviastale.command.cpop
+  cv:
+    description: ""
+    usage: "/cv"
+    permission: lyviastale.command.cv
