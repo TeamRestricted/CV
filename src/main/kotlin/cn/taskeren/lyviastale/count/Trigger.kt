@@ -22,21 +22,6 @@ class Trigger(
 
 		val cond = condition.trim()
 		when {
-			cond.startsWith(">") -> {
-				val condValue = cond.removePrefix(">").trim().toIntOrNull()
-					?: error("Invalid condition value $cond")
-				if(value > condValue) {
-					executeCommand()
-				}
-			}
-
-			cond.startsWith("<") -> {
-				val condValue = cond.removePrefix("<").trim().toIntOrNull()
-					?: error("Invalid condition value $cond")
-				if(value < condValue) {
-					executeCommand()
-				}
-			}
 
 			cond.startsWith(">=") -> {
 				val condValue = cond.removePrefix(">=").trim().toIntOrNull()
@@ -50,6 +35,22 @@ class Trigger(
 				val condValue = cond.removePrefix("<=").trim().toIntOrNull()
 					?: error("Invalid condition value $cond")
 				if(value <= condValue) {
+					executeCommand()
+				}
+			}
+
+			cond.startsWith(">") -> {
+				val condValue = cond.removePrefix(">").trim().toIntOrNull()
+					?: error("Invalid condition value $cond")
+				if(value > condValue) {
+					executeCommand()
+				}
+			}
+
+			cond.startsWith("<") -> {
+				val condValue = cond.removePrefix("<").trim().toIntOrNull()
+					?: error("Invalid condition value $cond")
+				if(value < condValue) {
 					executeCommand()
 				}
 			}

@@ -3,23 +3,23 @@ package cn.taskeren.lyviastale.command
 import cn.taskeren.lyviastale.LTLog
 import cn.taskeren.lyviastale.TextConst
 import cn.taskeren.lyviastale.count.CVFactory
-import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
-object CVCommand : CommandExecutor, TabCompleter {
+object GCVCommand : CommandExecutor, TabCompleter {
 
 	private val HelpText = """
-		${GRAY}${BOLD}===[ ${GOLD}${BOLD}CV ${GRAY}${BOLD}]===
+		${GRAY}${BOLD}===[ ${GOLD}${BOLD}GCV ${GRAY}${BOLD}]===
 		${GRAY}${BOLD}- ${GOLD}${BOLD}create ${GRAY}<identifier> [defaultValue] ${WHITE}- To create the CV with default value
 		${GRAY}${BOLD}- ${GOLD}${BOLD}remove ${GRAY}<identifier> ${WHITE}- To remove the CV
-		${GRAY}${BOLD}- ${GOLD}${BOLD}set ${GRAY}<identifier> <playerName> <value> ${WHITE}- To set the value for the player of the CV
-		${GRAY}${BOLD}- ${GOLD}${BOLD}add ${GRAY}<identifier> <playerName> <value> ${WHITE}- To add the value for the player to the CV
-		${GRAY}${BOLD}- ${GOLD}${BOLD}get ${GRAY}<identifier> <playerName> ${WHITE}- To get the value for the player of the CV
-		${GRAY}${BOLD}- ${GOLD}${BOLD}reset ${GRAY}<identifier> <playerName> ${WHITE}- To reset the value for the player of the CV to the default
+		${GRAY}${BOLD}- ${GOLD}${BOLD}set ${GRAY}<identifier> <value> ${WHITE}- To set the value of the CV
+		${GRAY}${BOLD}- ${GOLD}${BOLD}add ${GRAY}<identifier> <value> ${WHITE}- To add the value to the CV
+		${GRAY}${BOLD}- ${GOLD}${BOLD}get ${GRAY}<identifier> ${WHITE}- To get the value of the CV
+		${GRAY}${BOLD}- ${GOLD}${BOLD}reset ${GRAY}<identifier> ${WHITE}- To reset the value of the CV to the default
 		${GRAY}${BOLD}- ${GOLD}${BOLD}list ${WHITE}- To get the list of the identifiers of the CVs
 		${GRAY}${BOLD}- ${GOLD}${BOLD}reload ${WHITE}- To reload the configurations of the CVs ${GRAY}(mostly used to update the triggers)
 	""".trimIndent()
@@ -38,86 +38,78 @@ object CVCommand : CommandExecutor, TabCompleter {
 		}
 
 		val p0 = args.removeAt(0)
-		if(p0 == "create") { // create <cv_id> [cv_default]
+		if(p0 == "create") {
 			val cvIdentifier = args.getOrNull(0)
 			val cvDefaultValue = args.getOrNull(1)?.let(String::toIntOrNull) ?: 0
 			if(cvIdentifier == null) {
 				sender.sendMessage("Missing arguments")
 				return true
 			}
-			CVFactory.createPlayerCV(cvIdentifier, cvDefaultValue)
+			CVFactory.createGlobalCV(cvIdentifier, cvDefaultValue)
 			sender.sendMessage("Success!")
 			return true
-		} else if(p0 == "get") { // get <cv_id> <p_id>
+		} else if(p0 == "get") {
 			val cvIdentifier = args.getOrNull(0)
-			val playerName = args.getOrNull(1)
-			if(cvIdentifier == null || playerName == null) {
+			if(cvIdentifier == null) {
 				sender.sendMessage("Missing arguments")
 				return true
 			}
-			val player = Bukkit.getOfflinePlayer(playerName)
-			val cv = CVFactory.getPlayerCV(cvIdentifier)
+			val cv = CVFactory.getGlobalCV(cvIdentifier)
 			if(cv == null) {
 				sender.sendMessage("CV does not exist!")
 				return true
 			}
-			val value = cv.getValue(player.uniqueId)
-			sender.sendMessage("CV $cvIdentifier value for player $playerName is ${value}.")
+			val value = cv.getValue()
+			sender.sendMessage("CV $cvIdentifier value is ${value}.")
 			return true
-		} else if(p0 == "set") { // get <cv_id> <p_id> <value>
+		} else if(p0 == "set") {
 			val cvIdentifier = args.getOrNull(0)
-			val playerName = args.getOrNull(1)
-			val newValue = args.getOrNull(2)?.let(String::toIntOrNull)
-			if(cvIdentifier == null || playerName == null || newValue == null) {
+			val newValue = args.getOrNull(1)?.let(String::toIntOrNull)
+			if(cvIdentifier == null || newValue == null) {
 				sender.sendMessage("Missing/invalid arguments")
 				return true
 			}
-			val player = Bukkit.getOfflinePlayer(playerName)
-			val cv = CVFactory.getPlayerCV(cvIdentifier)
+			val cv = CVFactory.getGlobalCV(cvIdentifier)
 			if(cv == null) {
 				sender.sendMessage("CV does not exist!")
 				return true
 			}
-			val oldValue = cv.getValue(player.uniqueId)
-			cv.setValue(player.uniqueId, newValue)
-			sender.sendMessage("CV $cvIdentifier value for player $playerName was ${oldValue}, and now is ${newValue}.")
+			val oldValue = cv.getValue()
+			cv.setValue(newValue)
+			sender.sendMessage("CV $cvIdentifier value was ${oldValue}, and now is ${newValue}.")
 			return true
 		} else if(p0 == "add") {
 			val cvIdentifier = args.getOrNull(0)
-			val playerName = args.getOrNull(1)
-			val addValue = args.getOrNull(2)?.let(String::toIntOrNull)
-			if(cvIdentifier == null || playerName == null || addValue == null) {
+			val addValue = args.getOrNull(1)?.let(String::toIntOrNull)
+			if(cvIdentifier == null || addValue == null) {
 				sender.sendMessage("Missing/invalid arguments")
 				return true
 			}
-			val player = Bukkit.getOfflinePlayer(playerName)
-			val cv = CVFactory.getPlayerCV(cvIdentifier)
+			val cv = CVFactory.getGlobalCV(cvIdentifier)
 			if(cv == null) {
 				sender.sendMessage("CV does not exist!")
 				return true
 			}
-			val oldValue = cv.getValue(player.uniqueId)
-			cv.addValue(player.uniqueId, addValue)
+			val oldValue = cv.getValue()
+			cv.addValue(addValue)
 			val newValue = oldValue + addValue
-			sender.sendMessage("CV $cvIdentifier value for player $playerName was ${oldValue}, and now is ${newValue}.")
+			sender.sendMessage("CV $cvIdentifier value was ${oldValue}, and now is ${newValue}.")
 			return true
 		} else if(p0 == "reset") {
 			val cvIdentifier = args.getOrNull(0)
-			val playerName = args.getOrNull(1)
-			if(cvIdentifier == null || playerName == null) {
+			if(cvIdentifier == null) {
 				sender.sendMessage("Missing/invalid arguments")
 				return true
 			}
-			val player = Bukkit.getOfflinePlayer(playerName)
-			val cv = CVFactory.getPlayerCV(cvIdentifier)
+			val cv = CVFactory.getGlobalCV(cvIdentifier)
 			if(cv == null) {
 				sender.sendMessage("CV does not exist!")
 				return true
 			}
-			val oldValue = cv.getValue(player.uniqueId)
-			cv.resetValue(player.uniqueId)
-			val newValue = cv.getValue(player.uniqueId)
-			sender.sendMessage("CV $cvIdentifier value for player $playerName was ${oldValue}, and now is ${newValue}.")
+			val oldValue = cv.getValue()
+			cv.resetValue()
+			val newValue = cv.getValue()
+			sender.sendMessage("CV $cvIdentifier value was ${oldValue}, and now is ${newValue}.")
 			return true
 		} else if(p0 == "remove") {
 			val cvIdentifier = args.getOrNull(0)
@@ -125,7 +117,7 @@ object CVCommand : CommandExecutor, TabCompleter {
 				sender.sendMessage("Missing arguments")
 				return true
 			}
-			val flag = CVFactory.removePlayerCV(cvIdentifier)
+			val flag = CVFactory.removeGlobalCV(cvIdentifier)
 			if(flag) {
 				sender.sendMessage("Success!")
 			} else {
@@ -133,8 +125,8 @@ object CVCommand : CommandExecutor, TabCompleter {
 			}
 			return true
 		} else if(p0 == "list") {
-			sender.sendMessage("===[ Available CVs ]===")
-			CVFactory.listPlayerCV().forEach {
+			sender.sendMessage("===[ Available GCVs ]===")
+			CVFactory.listGlobalCV().forEach {
 				sender.sendMessage("- $it")
 			}
 			return true
@@ -176,13 +168,6 @@ object CVCommand : CommandExecutor, TabCompleter {
 				}
 			}
 			3 -> {
-				if(arg0 in subcommandToProcessCV) {
-					return Bukkit.getOnlinePlayers().map { it.name }
-				} else {
-					listOf()
-				}
-			}
-			4 -> {
 				if(arg0 in subcommandToProcessCV) {
 					return listOf("0", "1", "100")
 				} else {

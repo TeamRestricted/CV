@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "cn.taskeren"
-version = "1.0"
+version = "1.1"
 description = "Lyvia's Tale"
 
 repositories {

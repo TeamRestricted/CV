@@ -2,6 +2,7 @@ package cn.taskeren.lyviastale
 
 import cn.taskeren.lyviastale.command.CPOPCommand
 import cn.taskeren.lyviastale.command.CVCommand
+import cn.taskeren.lyviastale.command.GCVCommand
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoDatabase
 import org.apache.logging.log4j.LogManager
@@ -40,9 +41,13 @@ object LyviasTaleInitializer {
 			setExecutor(CVCommand)
 			tabCompleter = CVCommand
 		}
+		LyviasTale.getCommand("gcv")?.apply {
+			setExecutor(GCVCommand)
+			tabCompleter = GCVCommand
+		}
 
 		LTLog.info("Registering PAPI Extension")
-		LyviasTalePlaceholderExpansion().register()
+		initPlaceholderExpansions()
 	}
 
 	private fun loadConfig() {

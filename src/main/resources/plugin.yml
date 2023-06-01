@@ -15,11 +15,16 @@ permissions:
     default: op
     children:
       lyviastale.command.cpop: true
+      lyviastale.command.cv: true
+      lyviastale.command.gcv: true
   lyviastale.command.cpop:
     description: "The permission to execute cpop command"
     default: op
   lyviastale.command.cv:
     description: "The permission to execute cv command"
+    default: op
+  lyviastale.command.gcv:
+    description: "The permission to execute gcv command"
     default: op
 commands:
   cpop:
@@ -30,3 +35,7 @@ commands:
     description: ""
     usage: "/cv"
     permission: lyviastale.command.cv
+  gcv:
+    description: ""
+    usage: "/gcv"
+    permission: lyviastale.command.gcv
